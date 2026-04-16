@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Assertions;
 class ToUpperCaseOperator implements UnaryOperator<String> {
     @Override
     public String apply(String s) {
-        return s;
+        return s.toUpperCase();
     }
 }
 
@@ -24,7 +24,7 @@ class AbsMaxOperator implements BinaryOperator<Integer> {
 
     @Override
     public Integer apply(Integer integer, Integer integer2) {
-        return 0;
+        return Math.max(Math.abs(integer), Math.abs(integer2));
     }
 }
 
@@ -32,7 +32,7 @@ class StringLengthMoreThan5 implements Predicate<String> {
 
     @Override
     public boolean test(String s) {
-        return true;
+        return s.length() > 5;
     }
 }
 
@@ -42,18 +42,28 @@ class IsNumberASquareOfAnotherNumber implements Predicate<Integer> {
 
     @Override
     public boolean test(Integer integer) {
-        return true;
+        if (integer < 0) {
+            return false;
+        }
+        int r = (int) Math.sqrt(integer);
+        return r * r == integer;
     }
 }
 
 // Возвращает четные числа, начиная с from включительно, если в from нечетное число, то начиная с первого четного с from
 class EvenNumberSupplier implements Supplier<Integer> {
 
-    public EvenNumberSupplier(int from) {}
+    private int next;
+
+    public EvenNumberSupplier(int from) {
+        this.next = from % 2 == 0 ? from : from + 1;
+    }
 
     @Override
     public Integer get() {
-        return 0;
+        int current = next;
+        next += 2;
+        return current;
     }
 }
 
