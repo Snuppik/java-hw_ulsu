@@ -7,12 +7,39 @@ import edu.phystech.hw5.service.Validator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+
 /**
  * @author kzlv4natoly
  */
 public class ValidatorTest {
 
     private Validator validator = object -> {
+        for (Field field : object.getClass().getDeclaredFields()) {
+            if (field.getType() != String.class) {
+                continue;
+            }
+            field.setAccessible(true);
+            String value;
+            try {
+                value = (String) field.get(object);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+            NotBlank notBlank = field.getAnnotation(NotBlank.class);
+            if (notBlank != null && (value == null || value.isEmpty())) {
+                throw new ValidationException(notBlank.message());
+            }
+
+            Size size = field.getAnnotation(Size.class);
+            if (size != null) {
+                int length = value == null ? 0 : value.length();
+                if (length < size.min() || length > size.max()) {
+                    throw new ValidationException(size.message());
+                }
+            }
+        }
     };
 
     @Test
