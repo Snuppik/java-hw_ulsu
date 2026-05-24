@@ -18,10 +18,15 @@ import org.junit.jupiter.api.Test;
  * @author kzlv4natoly
  */
 class ConcurrentCounter {
-    private long value = 0;
-    void increment() {}
+    private final AtomicLong value = new AtomicLong();
 
-    long getValue() { return 0; }
+    void increment() {
+        value.incrementAndGet();
+    }
+
+    long getValue() {
+        return value.get();
+    }
 }
 
 
